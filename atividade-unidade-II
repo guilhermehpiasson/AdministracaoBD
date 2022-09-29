@@ -1,0 +1,217 @@
+CREATE DATABASE compras_vendas;
+
+CREATE TABLE cidades(
+	cod_cidade INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    uf CHAR(2)
+);
+
+CREATE TABLE clientes(
+	cod_cliente INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(120) NOT NULL,
+    cpf VARCHAR(15) NOT NULL,
+    telefone VARCHAR(17) NOT NULL,
+    endereco VARCHAR(150) NOT NULL,
+    cod_cidade INT NOT NULL REFERENCES cidades(cod_cidade)
+);
+
+CREATE TABLE tipo_funcionarios(
+	cod_funcionario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    salario NUMERIC(10,2) NOT NULL
+);
+
+CREATE TABLE funcionarios(
+	cod_funcionario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cpf VARCHAR(14) NOT NULL,
+    cod_tipo INT NOT NULL REFERENCES tipo_funcionarios(cod_tipo),
+    cod_cidade INT NOT NULL REFERENCES cidades (cod_cidade)
+);
+
+CREATE TABLE fornecedor(
+	cod_fornecedor INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    cnpj VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE compras(
+	cod_compra INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	data_compra DATE NOT NULL,
+    total_compra NUMERIC(10,2) NOT NULL,
+    cod_fornecedor INT NOT NULL REFERENCES fornecedor(cod_fornecedor)
+);
+
+CREATE TABLE produtos(
+	cod_produto INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(70) NOT NULL,
+    estoque INT NOT NULL,
+    valor_compra NUMERIC(10,2) NOT NULL,
+    valor_venda NUMERIC(10,2)
+);
+
+CREATE TABLE compras_itens(
+	cod_compras_itens INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    quantidade INT NOT NULL,
+    cod_compra INT NOT NULL REFERENCES compras (cod_compra),
+    cod_produto INT NOT NULL REFERENCES produtos(cod_produto)
+);
+
+CREATE TABLE contas_a_pagar(
+	cod_contas_pagar INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    valor NUMERIC(10,2) NOT NULL,
+    data_vencimento DATE NOT NULL,
+    data_pagamento DATE,
+    cod_compra INT NOT NULL REFERENCES compras(cod_compra)
+);
+
+CREATE TABLE vendas(
+	cod_venda INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    valor_total_venda NUMERIC(10,2) NOT NULL,
+    data_venda DATE NOT NULL,
+    cod_cliente INT NOT NULL REFERENCES clientes (cod_cliente),
+    cod_funcionario INT NOT NULL REFERENCES funcionarios(cod_funcionario)
+);
+
+CREATE TABLE vendas_itens (
+	cod_venda_itens INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    quantidade INT NOT NULL,
+    cod_venda INT NOT NULL REFERENCES vedas(cod_venda),
+    cod_produto INT NOT NULL REFERENCES produtos (cod_produto)
+);
+
+CREATE TABLE contas_a_receber(
+	cod_contas_receber INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    valor NUMERIC(10,2) NOT NULL,
+    data_vencimento DATE NOT NULL,
+    data_pagamento DATE,
+    cod_venda INT NOT NULL REFERENCES vendas(cod_venda)
+);
+
+insert into cidades (nome, uf) values ('Itapiranga','SC');
+insert into cidades (nome, uf) values ('Mondaí','SC');
+insert into cidades (nome, uf) values ('Tenente Portela','RS');
+insert into cidades (nome, uf) values ('Barra do Guarita','RS');
+insert into cidades (nome, uf) values ('São Miguel do Oeste','SC');
+insert into cidades (nome, uf) values ('Descanso','SC');
+insert into cidades (nome, uf) values ('Iporã do Oeste','SC');
+
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Heitor Moraes','414.415.430-07','49 99877-6654','Rua Moema, 119',1);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Enzo Duarte','131.165.749-52','49 99856-5654','Rua Angélica, 49',1);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Guilherme Vasconcelos','352.674.117-44','49 98765-5656','Rua Anhanguera, 110',2);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Nicolas Montenegro','277.213.217-00','49 99987-7878','Santa Catarina, 200',2);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Mariana Fagundes','384.861.545-29','55 99887-4323','Rua Armindo Gustavo, 300',3);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Nicole Trindade','626.114.925-90','55 99567-6776','Rua Guarujá, 34',4);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Samuel Vargas','776.645.653-24','55 99124-9765','Rua Almirante, 44',4);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('João Pedro Ferraz','486.141.895-08','49 99286-7645','Centro, 100',5);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Daniel Carvalho','831.735.323-09','49 99234-6721','Rua Coronel Valencio, 45',5);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Isadora Dolabella','106.761.823-64','49 98478-3454','Rua Casagrande Monteiro, 300',6);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Lívia Evelyn','662.166.622-52','49 99123-4556','Rua Paraná, 89',7);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Heloísa Silverstone','735.848.673-04','49 99167-6743','Rua Anhanguera, 100',7);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Murilo Maldonado','544.272.906-04','49 99654-4343','Rua São José, 100',6);
+insert into clientes(nome, cpf, telefone, endereco, cod_cidade) values ('Gabriela Bongiovanni','112.943.528-81','49 98454-4576','Rua Jocó, 120',4);
+
+
+insert into tipo_funcionarios (nome, salario) values ('Vendedor','1850.00');
+insert into tipo_funcionarios (nome, salario) values ('Caixa','1800.00');
+insert into tipo_funcionarios (nome, salario) values ('Repositor','1500.00');
+insert into tipo_funcionarios (nome, salario) values ('Compras','1650.00');
+
+insert into funcionarios(nome, cpf, cod_tipo, cod_cidade) VALUES ('Murilo Maldonado','544.272.906-04',1,1);
+insert into funcionarios(nome, cpf, cod_tipo, cod_cidade) VALUES ('Gabriela Bongiovanni','112.943.528-81',1,4);
+insert into funcionarios(nome, cpf, cod_tipo, cod_cidade) VALUES ('Eduardo Monteiro','851.625.699-50',1,3);
+insert into funcionarios(nome, cpf, cod_tipo, cod_cidade) VALUES ('Pedro Henrique Trindade','596.422.644-20',1,3);
+insert into funcionarios(nome, cpf, cod_tipo, cod_cidade) VALUES ('Otávio Vargas','873.317.416-40',2,2);
+insert into funcionarios(nome, cpf, cod_tipo, cod_cidade) VALUES ('Rodrigo Carvalho','651.292.413-47',3,1);
+insert into funcionarios(nome, cpf, cod_tipo, cod_cidade) VALUES ('Carolina Bial','875.530.470-23',4,5);
+
+insert into fornecedor (nome, cnpj) VALUES ('Mazer Distribuidora','99.128.126/0001-03');
+insert into fornecedor (nome, cnpj) VALUES ('JBrasil Empresa LTDA','82.016.344/0001-53');
+insert into fornecedor (nome, cnpj) VALUES ('Campinas Sul','48.392.152/0001-03');
+insert into fornecedor (nome, cnpj) VALUES ('Qualitá Empresa e Cia','10.755.843/0001-51');
+insert into fornecedor (nome, cnpj) VALUES ('Deltasul Distribuidora','60.187.636/0001-16');
+
+insert into compras (data_compra, total_compra, cod_fornecedor) values ('2017-02-13','1505.00',1);
+insert into compras (data_compra, total_compra, cod_fornecedor) values ('2017-02-21','3650.00',3);
+insert into compras (data_compra, total_compra, cod_fornecedor) values ('2017-03-01','3026.00',3);
+insert into compras (data_compra, total_compra, cod_fornecedor) values ('2017-03-02','3133.00',4);
+insert into compras (data_compra, total_compra, cod_fornecedor) values ('2017-04-23','2139.00',1);
+
+
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Impressora HP Laserjet Pro P1102W','5','245.00','320.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Plotter De Recorte Profissional Gs-360l 36cm Com Sensor Laser','0','580.00','750.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Impressora HP Laserjet Pro M252dw','7','150.00','272.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Roteador e Repetidor D-link Dir-809 AC 750Mbps Dual-band','2','56.00','89.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Roteador Wireless Corporativo 300 Mbps Hotspot 300 Intelbras','5','34.00','99.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Projetor Epson 1930 Lcd Xga 4200 Lumens Hdmi Usb','8','799.00','1134.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Projetor Epson Powerlite S27 3LCD 2700 Lumens Wireless Ready','9','630.00','899.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Placa De Video Evga Geforce Gtx 1080 Ftw Dt Gaming','1','340.00','478.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Ssd 480gb Sandisk Plus G26 - Lançamento','0','150.00','240.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Memória Para Notebook 4gb Ddr3 1600mhz Cl11 Kvr16s11s8/4 ','3','250.00','375.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Memória Desktop Memory One 8gb Ddr3 1333 Mhz','2','130.00','260.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Smartphone Samsung Galaxy J5 Duos Dual Chip Android 5.1','6','500.00','745.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Smartphone Motorola Moto G4 Dual Chip Android 6.0 ','10','299.00','545.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Smartphone Samsung Galaxy J7 Prime Dual Chip Android','0','850.00','1220.00');
+insert into produtos(nome, estoque, valor_compra, valor_venda) VALUES ('Notebook Samsung Expert X22 Intel Core i5 6GB 1TB LED FULL ','3','980.00','1299.00');
+
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('1',1,1); #245
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('2',1,2); #580
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('3',1,3); #150
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('4',1,5); #34
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('5',1,7); #630
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('2',3,8); #340
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('4',3,10); #250
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('2',3,7); #630
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('1',4,1); #245
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('1',4,6); #799
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('2',4,10); #250
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('3',4,8); #340
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('5',2,4); # 56
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('5',2,5); # 34
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('3',5,11); # 130
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('2',5,12); # 500
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('1',5,14); # 850
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('3',5,13); # 299
+insert into compras_itens(quantidade, cod_compra, cod_produto) VALUES ('1',5,15); # 980
+
+insert into contas_a_pagar(valor, data_vencimento, data_pagamento, cod_compra) values ('505.00','2017-03-13','2017-03-10',1);
+insert into contas_a_pagar(valor, data_vencimento, cod_compra) values ('500.00','2017-04-13',1);
+insert into contas_a_pagar(valor, data_vencimento, cod_compra) values ('500.00','2017-05-13',1);
+insert into contas_a_pagar(valor, data_vencimento, data_pagamento, cod_compra) values ('1650.00','2017-03-21','2017-03-19',2);
+insert into contas_a_pagar(valor, data_vencimento, cod_compra) values ('1000.00','2017-04-21',2);
+insert into contas_a_pagar(valor, data_vencimento, cod_compra) values ('1000.00','2017-04-21',2);
+insert into contas_a_pagar(valor, data_vencimento, data_pagamento, cod_compra) values ('1026.00','2017-04-01','2017-04-01',3);
+insert into contas_a_pagar(valor, data_vencimento, cod_compra) values ('1000.00','2017-05-01',3);
+insert into contas_a_pagar(valor, data_vencimento, cod_compra) values ('1000.00','2017-06-01',3);
+insert into contas_a_pagar(valor, data_vencimento, data_pagamento, cod_compra) values ('1133.00','2017-04-02','2017-04-01',4);
+insert into contas_a_pagar(valor, data_vencimento, data_pagamento, cod_compra) values ('1000.00','2017-05-02','2017-04-01',4);
+insert into contas_a_pagar(valor, data_vencimento, cod_compra) values ('1000.00','2017-06-02',4);
+insert into contas_a_pagar(valor, data_vencimento, data_pagamento, cod_compra) values ('2139.00','2017-04-23','2017-04-23',5);
+
+insert into vendas (valor_total_venda, data_venda, cod_cliente, cod_funcionario) VALUES ('640.00','2017-02-28',2,1);
+insert into vendas (valor_total_venda, data_venda, cod_cliente, cod_funcionario) VALUES ('4838.00','2017-03-05',3,3);
+insert into vendas (valor_total_venda, data_venda, cod_cliente, cod_funcionario) VALUES ('2090.00','2017-03-22',5,4);
+insert into vendas (valor_total_venda, data_venda, cod_cliente, cod_funcionario) VALUES ('375.00','2017-04-01',6,4);
+
+insert into vendas_itens (quantidade, cod_venda, cod_produto) values ('1',1,1);
+insert into vendas_itens (quantidade, cod_venda, cod_produto) values ('2',1,3);
+insert into vendas_itens (quantidade, cod_venda, cod_produto) values ('1',1,2);
+insert into vendas_itens (quantidade, cod_venda, cod_produto) values ('3',2,10);
+insert into vendas_itens (quantidade, cod_venda, cod_produto) values ('1',2,3);
+insert into vendas_itens (quantidade, cod_venda, cod_produto) values ('3',2,5);
+insert into vendas_itens (quantidade, cod_venda, cod_produto) values ('2',2,8);
+insert into vendas_itens (quantidade, cod_venda, cod_produto) values ('1',3,8);
+insert into vendas_itens (quantidade, cod_venda, cod_produto) values ('2',3,10);
+insert into vendas_itens (quantidade, cod_venda, cod_produto) values ('1',4,12);
+
+insert into contas_a_receber (valor, data_vencimento, data_pagamento, cod_venda) values ('320.00','2017-03-01','2017-03-01',1);
+insert into contas_a_receber (valor, data_vencimento, data_pagamento, cod_venda) values ('320.00','2017-04-01','2017-03-01',1);
+insert into contas_a_receber (valor, data_vencimento, data_pagamento, cod_venda) values ('1000.00','2017-03-05','2017-03-05',2);
+insert into contas_a_receber (valor, data_vencimento, cod_venda) values ('1000.00','2017-04-05',2);
+insert into contas_a_receber (valor, data_vencimento, cod_venda) values ('1000.00','2017-05-05',2);
+insert into contas_a_receber (valor, data_vencimento, cod_venda) values ('1000.00','2017-06-05',2);
+insert into contas_a_receber (valor, data_vencimento, cod_venda) values ('838.00','2017-07-05',2);
+insert into contas_a_receber (valor, data_vencimento, cod_venda) values ('1090.00','2017-04-22',3);
+insert into contas_a_receber (valor, data_vencimento, cod_venda) values ('1000.00','2017-05-22',3);
+insert into contas_a_receber (valor, data_vencimento, data_pagamento, cod_venda) values ('375.00','2017-04-01','2017-04-01',4);
+
